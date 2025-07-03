@@ -1,0 +1,16 @@
+{
+    "name": "Stock-Market-AI",
+    "description": "https://scrimba.com/fullstack-path-c0fullstack/~07or",
+    "scripts": {
+        "start": "vite",
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview",
+        "type": "module"
+    },
+    "dependencies": {
+        "dotenv": "^17.0.1",
+        "openai": "^4.14.2",
+        "vite": "latest"
+    }
+}
