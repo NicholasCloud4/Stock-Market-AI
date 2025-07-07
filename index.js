@@ -42,7 +42,7 @@ async function fetchStockData() {
     loadingArea.style.display = 'flex'
     try {
         const stockData = await Promise.all(tickersArr.map(async (ticker) => {
-            const url = `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/day/${dates.startDate}/${dates.endDate}?apiKey=${process.env.POLYGON_API_KEY}`
+            const url = `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/day/${dates.startDate}/${dates.endDate}?apiKey=${import.meta.env.VITE_POLYGON_API_KEY}`
             const response = await fetch(url)
             const data = await response.text()
             const status = await response.status
@@ -61,7 +61,32 @@ async function fetchStockData() {
 }
 
 async function fetchReport(data) {
-    console.log(data)
+    const messages = [
+        {
+            role: 'system',
+            content: 'You are a trading guru. Given data on share prices over the past 3 days, write a report of no more than 150 words describing the stocks performance and recommending whether to buy, hold or sell.'
+        },
+        {
+            role: 'user',
+            content: data
+        }
+    ]
+
+    try {
+        const openai = new OpenAI({
+            apiKey: import.meta.env.VITE_STOCK_KEY,
+            dangerouslyAllowBrowser: true
+        })
+        const response = await openai.chat.completions.create({
+            model: 'gpt-3.5-turbo',
+            messages: messages
+        })
+        renderReport(response.choices[0].message.content)
+
+    } catch (err) {
+        console.log('Error:', err)
+        loadingArea.innerText = 'Unable to access AI. Please refresh and try again'
+    }
     /** 
      * Challenge:
      * 1. Use the OpenAI API to generate a report advising 
